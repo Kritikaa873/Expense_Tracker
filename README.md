@@ -79,7 +79,8 @@ npm run lint     # ESLint check over the source
 
 ## Screenshots
 
-> Replace the placeholders below with actual screenshots (e.g. `screenshots/dashboard.png`).
+
+
 
 1. **Dashboard** — balance summary, add-transaction form, transaction list, and chart.
    `![Dashboard screenshot](screenshots/dashboard.png)`
@@ -87,6 +88,10 @@ npm run lint     # ESLint check over the source
    `![Budget warning screenshot](screenshots/budget-warning.png)`
 3. **Monthly summary** — per-month income, expenses, and net balance table.
    `![Monthly summary screenshot](screenshots/monthly-summary.png)`
+
+   ## Live Demo
+   https://expense-tracker-theta-roan-51.vercel.app
+
 
 ## Known limitations
 
