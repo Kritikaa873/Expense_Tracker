@@ -19,14 +19,25 @@ export default function CategoryFilter({
     ...getCategoriesForType(TRANSACTION_TYPES.EXPENSE),
     ...getCategoriesForType(TRANSACTION_TYPES.INCOME),
   ]
+  // Expense and income categories both contain "Other" — dedupe so the
+  // dropdown doesn't list it twice.
   const uniqueCategoryOptions = [...new Set(categoryOptions)]
 
   return (
-    <section className="filter-bar" aria-label="Filter and sort transactions">
-      <div className="field inline">
-        <label className="field-label" htmlFor="filter-category">Category</label>
+    <section
+      className="flex flex-wrap items-end gap-3 rounded-xl border border-border-soft bg-surface p-[0.9rem_1.25rem] shadow-card"
+      aria-label="Filter and sort transactions"
+    >
+      <div className="flex min-w-[190px] flex-col gap-1 max-[480px]:min-w-full">
+        <label
+          className="text-[0.82rem] font-bold tracking-[0.03em] text-muted uppercase"
+          htmlFor="filter-category"
+        >
+          Category
+        </label>
         <select
           id="filter-category"
+          className="w-full rounded-lg border border-border-soft bg-surface px-2.5 py-2 font-[inherit] text-[inherit] text-ink"
           value={selectedCategory}
           onChange={(event) => onSelectCategory(event.target.value)}
         >
@@ -37,10 +48,16 @@ export default function CategoryFilter({
           ))}
         </select>
       </div>
-      <div className="field inline">
-        <label className="field-label" htmlFor="filter-sort">Sort by</label>
+      <div className="flex min-w-[190px] flex-col gap-1 max-[480px]:min-w-full">
+        <label
+          className="text-[0.82rem] font-bold tracking-[0.03em] text-muted uppercase"
+          htmlFor="filter-sort"
+        >
+          Sort by
+        </label>
         <select
           id="filter-sort"
+          className="w-full rounded-lg border border-border-soft bg-surface px-2.5 py-2 font-[inherit] text-[inherit] text-ink"
           value={sortMode}
           onChange={(event) => onSelectSortMode(event.target.value)}
         >

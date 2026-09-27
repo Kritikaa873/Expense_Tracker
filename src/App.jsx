@@ -43,10 +43,6 @@ export default function App() {
     setFilters((previous) => ({ ...previous, sortMode }))
   }
 
-  const handleChangeBudget = (value) => {
-    setMonthlyBudget(value)
-  }
-
   const totals = useMemo(() => getTotals(transactions), [transactions])
   const monthlySummary = useMemo(() => getMonthlySummary(transactions), [transactions])
   const visibleTransactions = useMemo(
@@ -59,9 +55,10 @@ export default function App() {
   )
 
   return (
-    <div className="app-shell">
+    <div className="flex min-h-screen flex-col bg-background text-ink">
       <Header />
-      <main className="container">
+      {/* .container: centered max-width column; flex-1 pushes the footer down. */}
+      <main className="mx-auto w-full max-w-[1100px] flex-1 px-4 pb-10 pt-6">
         <Routes>
           <Route
             path="/"
@@ -93,7 +90,7 @@ export default function App() {
               <BudgetPage
                 transactions={transactions}
                 monthlyBudget={monthlyBudget}
-                onChangeBudget={handleChangeBudget}
+                onChangeBudget={setMonthlyBudget}
               />
             }
           />
@@ -101,8 +98,8 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <footer className="app-footer">
-        <div className="container">
+      <footer className="border-t border-border-soft bg-surface py-4 text-[0.85rem] text-muted">
+        <div className="mx-auto w-full max-w-[1100px] px-4">
           Data is saved locally in your browser via localStorage — nothing leaves your device.
         </div>
       </footer>
@@ -112,9 +109,11 @@ export default function App() {
 
 function NotFound() {
   return (
-    <div className="empty-state">
-      <p className="empty-title">Page not found</p>
-      <p className="empty-hint">Use the navigation above to get back on track.</p>
+    <div className="rounded-xl border border-border-soft bg-surface p-[1.1rem_1.25rem] shadow-card">
+      <p className="m-0 mb-1 font-bold">Page not found</p>
+      <p className="m-0 text-[0.92rem] text-muted">
+        Use the navigation above to get back on track.
+      </p>
     </div>
   )
 }

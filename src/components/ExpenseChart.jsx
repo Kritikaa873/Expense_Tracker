@@ -17,15 +17,18 @@ const PIE_COLORS = [
 export default function ExpenseChart({ expensesByCategory }) {
   if (expensesByCategory.length === 0) {
     return (
-      <div className="empty-state compact">
-        <p className="empty-title">No expenses to chart yet</p>
-        <p className="empty-hint">Add an expense and your spending breakdown will appear here.</p>
+      // Slightly roomier empty card (the old ".empty-state.compact").
+      <div className="rounded-xl border border-border-soft bg-surface p-6 shadow-card">
+        <p className="m-0 mb-1 font-bold">No expenses to chart yet</p>
+        <p className="m-0 text-[0.92rem] text-muted">
+          Add an expense and your spending breakdown will appear here.
+        </p>
       </div>
     )
   }
 
   return (
-    <div className="chart-wrapper">
+    <div className="w-full">
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -37,7 +40,7 @@ export default function ExpenseChart({ expensesByCategory }) {
             innerRadius={55}
             outerRadius={95}
             paddingAngle={2}
-            stroke="var(--surface)"
+            stroke="var(--color-surface)"
           >
             {expensesByCategory.map((entry, index) => (
               <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />

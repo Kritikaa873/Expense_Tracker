@@ -11,6 +11,12 @@ const EMPTY_FORM = {
   date: '',
 }
 
+// The two radio choices for the "Type" field.
+const TYPE_OPTIONS = [
+  { value: TRANSACTION_TYPES.EXPENSE, label: 'Expense' },
+  { value: TRANSACTION_TYPES.INCOME, label: 'Income' },
+]
+
 export default function TransactionForm({ onAdd }) {
   const [form, setForm] = useState({ ...EMPTY_FORM, date: getTodayISODate() })
   const [errors, setErrors] = useState({})
@@ -21,6 +27,8 @@ export default function TransactionForm({ onAdd }) {
     const { name, value } = event.target
     setForm((previousForm) => {
       const nextForm = { ...previousForm, [name]: value }
+      // Switching type clears the category, since income and expense
+      // have different category lists.
       if (name === 'type') {
         nextForm.category = ''
       }
@@ -67,40 +75,54 @@ export default function TransactionForm({ onAdd }) {
       }),
     )
 
+    // Keep the chosen type and today's date so several entries
+    // can be added in a row without retyping them.
     setForm({ ...EMPTY_FORM, type: form.type, date: getTodayISODate() })
     setErrors({})
   }
 
+  // Shared input classes so every control looks and behaves identically.
+  const controlClass =
+    'w-full rounded-lg border border-border-soft bg-surface px-2.5 py-2 font-[inherit] text-[inherit] text-ink'
+  const labelClass =
+    'text-[0.82rem] font-bold tracking-[0.03em] text-muted uppercase'
+
   return (
-    <section className="card form-card" aria-label="Add a transaction">
-      <h2>Add transaction</h2>
-      <form onSubmit={handleSubmit} noValidate>
-        <fieldset className="type-toggle">
-          <legend className="field-label">Type</legend>
-          <label className={`type-option${form.type === TRANSACTION_TYPES.EXPENSE ? ' selected' : ''}`}>
-            <input
-              type="radio"
-              name="type"
-              value={TRANSACTION_TYPES.EXPENSE}
-              checked={form.type === TRANSACTION_TYPES.EXPENSE}
-              onChange={handleChange}
-            />
-            Expense
-          </label>
-          <label className={`type-option${form.type === TRANSACTION_TYPES.INCOME ? ' selected' : ''}`}>
-            <input
-              type="radio"
-              name="type"
-              value={TRANSACTION_TYPES.INCOME}
-              checked={form.type === TRANSACTION_TYPES.INCOME}
-              onChange={handleChange}
-            />
-            Income
-          </label>
+    <section
+      className="flex flex-col gap-[0.85rem] rounded-xl border border-border-soft bg-surface p-[1.1rem_1.25rem] shadow-card"
+      aria-label="Add a transaction"
+    >
+      <h2 className="m-0 mb-3 text-[1.05rem] leading-[1.25]">Add transaction</h2>
+      <form className="flex flex-col gap-[0.85rem]" onSubmit={handleSubmit} noValidate>
+        {/* Type toggle: pill-shaped radio buttons. */}
+        <fieldset className="m-0 flex gap-2 border-0 p-0 max-[480px]:flex-col">
+          <legend className="mb-[0.4rem] p-0 text-[0.82rem] font-bold tracking-[0.03em] text-muted uppercase">
+            Type
+          </legend>
+          {TYPE_OPTIONS.map((option) => (
+            <label
+              key={option.value}
+              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full border px-[0.6rem] py-[0.45rem] text-[0.92rem] font-semibold ${
+                form.type === option.value
+                  ? 'border-primary bg-sky-tint text-primary-dark'
+                  : 'border-border-soft'
+              }`}
+            >
+              <input
+                type="radio"
+                name="type"
+                value={option.value}
+                checked={form.type === option.value}
+                onChange={handleChange}
+                className="m-0 w-auto accent-primary"
+              />
+              {option.label}
+            </label>
+          ))}
         </fieldset>
 
-        <div className="field">
-          <label className="field-label" htmlFor="amount">Amount</label>
+        <div className="flex flex-col gap-[0.3rem]">
+          <label className={labelClass} htmlFor="amount">Amount</label>
           <input
             id="amount"
             name="amount"
@@ -109,18 +131,24 @@ export default function TransactionForm({ onAdd }) {
             min="0"
             step="0.01"
             placeholder="0.00"
+            className={controlClass}
             value={form.amount}
             onChange={handleChange}
             aria-invalid={errors.amount ? 'true' : undefined}
           />
-          {errors.amount && <p className="field-error" role="alert">{errors.amount}</p>}
+          {errors.amount && (
+            <p className="m-0 text-[0.82rem] font-semibold text-expense" role="alert">
+              {errors.amount}
+            </p>
+          )}
         </div>
 
-        <div className="field">
-          <label className="field-label" htmlFor="category">Category</label>
+        <div className="flex flex-col gap-[0.3rem]">
+          <label className={labelClass} htmlFor="category">Category</label>
           <select
             id="category"
             name="category"
+            className={controlClass}
             value={form.category}
             onChange={handleChange}
             aria-invalid={errors.category ? 'true' : undefined}
@@ -130,38 +158,57 @@ export default function TransactionForm({ onAdd }) {
               <option key={category} value={category}>{category}</option>
             ))}
           </select>
-          {errors.category && <p className="field-error" role="alert">{errors.category}</p>}
+          {errors.category && (
+            <p className="m-0 text-[0.82rem] font-semibold text-expense" role="alert">
+              {errors.category}
+            </p>
+          )}
         </div>
 
-        <div className="field">
-          <label className="field-label" htmlFor="description">Description</label>
+        <div className="flex flex-col gap-[0.3rem]">
+          <label className={labelClass} htmlFor="description">Description</label>
           <input
             id="description"
             name="description"
             type="text"
             placeholder="e.g. Weekly groceries"
             maxLength={80}
+            className={controlClass}
             value={form.description}
             onChange={handleChange}
             aria-invalid={errors.description ? 'true' : undefined}
           />
-          {errors.description && <p className="field-error" role="alert">{errors.description}</p>}
+          {errors.description && (
+            <p className="m-0 text-[0.82rem] font-semibold text-expense" role="alert">
+              {errors.description}
+            </p>
+          )}
         </div>
 
-        <div className="field">
-          <label className="field-label" htmlFor="date">Date</label>
+        <div className="flex flex-col gap-[0.3rem]">
+          <label className={labelClass} htmlFor="date">Date</label>
           <input
             id="date"
             name="date"
             type="date"
+            className={controlClass}
             value={form.date}
             onChange={handleChange}
             aria-invalid={errors.date ? 'true' : undefined}
           />
-          {errors.date && <p className="field-error" role="alert">{errors.date}</p>}
+          {errors.date && (
+            <p className="m-0 text-[0.82rem] font-semibold text-expense" role="alert">
+              {errors.date}
+            </p>
+          )}
         </div>
 
-        <button type="submit" className="button primary full-width">Add transaction</button>
+        <button
+          type="submit"
+          className="w-full cursor-pointer rounded-lg border border-primary bg-primary px-3.5 py-2 font-[inherit] font-semibold text-white transition-colors hover:bg-primary-dark"
+        >
+          Add transaction
+        </button>
       </form>
     </section>
   )
